@@ -74,7 +74,7 @@ export default function Home() {
     </div>
   
    
-     <div className="w-full mt-10 py-10 bg-zinc-100 grid sm:grid-cols-3 gap-3 items-center justify-center  ">
+     <div className="w-full mt-10 py-10 bg-zinc-100 grid sm:grid-cols-2  lg:grid-cols-3 gap-3 items-center justify-center  ">
       {loading ? (
       <div className="text-black">
         Loading...
@@ -82,8 +82,8 @@ export default function Home() {
       ) : ""}
      {
        news.map((rep, index)=>(
-         <div key={index} className="mx-auto">
-           <div className="w-80 bg-white shadow-lg rounded-md  p-4 ">
+         <div key={index} className="mx-auto p-4">
+           <div className=" bg-white shadow-lg rounded-md  p-4 ">
              {rep.fileUrl && (
              <div>
              <Image
@@ -116,7 +116,7 @@ export default function Home() {
              <div className="mt-3">
                <p className="text-gray-500 text-sm"> {rep.date} |  {rep.time}</p>
                {/* <p className="text-gray-600 mt-1 w-80 bg-orange-600">file link - {rep.fileUrl}</p> */}
-               <p className="text-black mt-1">{rep.headline ? rep.headline : ( <div className="text-red-500">{notFilledMessage}</div> )}</p>
+               <p className="text-black text-xl font-semibold mt-1">{rep.headline ? rep.headline : ( <div className="text-red-500">{notFilledMessage}</div> )}</p>
                <p className="text-zinc-900 mt-1">{rep.content ? rep.content : ( <div className="text-red-500">{notFilledMessage}</div> )}</p>
              </div>
            </div>

@@ -265,11 +265,11 @@ function Page() {
         
         <div className='w-full mt-10 bg-zinc-100'>
         <h1 className='text-2xl font-semibold text-center pt-5 '>All listed news</h1>
-        <div className="w-full mt-10 py-10 bg-zinc-100 grid sm:grid-cols-3 gap-3 items-center justify-center  ">
+        <div className="w-full mt-10 py-10 bg-zinc-100 grid sm:grid-cols-2 lg:grid-cols-3 gap-3 items-center justify-center  ">
             {
               news.map((rep, index)=>(
-                <div key={index} className="mx-auto">
-                  <div className="w-80 bg-white shadow-lg rounded-md  p-4 ">
+                <div key={index} className="mx-auto p-4">
+                  <div className=" bg-white shadow-lg rounded-md  p-4 ">
                     {rep.fileUrl && (
                     <div>
                     <Image

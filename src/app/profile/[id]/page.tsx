@@ -11,7 +11,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
-import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 
 
 type PageProps = {
@@ -61,11 +61,11 @@ function Page({params}: PageProps) {
       getNews()
     },[id])
 
-    const handleChangeHeadline = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleChangeHeadline = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
       setHeadline(e.target.value); // Update input field
       setUpdatedHeadline(e.target.value); // Store new value separately
     };
-    const handleChangeContent = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleChangeContent = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
       setContent(e.target.value); // Update input field
       setUpdatedContent(e.target.value); // Store new value separately
     };
@@ -124,15 +124,15 @@ function Page({params}: PageProps) {
                     )}
                     <div className="mt-3">
                       <p className="text-gray-500 text-sm"> {news?.date} |  {news?.time}</p>
-                      <Input 
+                      <Textarea 
                        value={headline}
                        onChange={handleChangeHeadline}
-                      className='text-black border-none shadow-none p-0'
+                      className='text-black border-none h-20 shadow-none p-0'
                       />
-                      <Input 
+                      <Textarea 
                        value={content}
                        onChange={handleChangeContent}
-                      className='text-black border-none shadow-none p-0'
+                      className='text-black border-none h-80 shadow-none p-0'
                       />
                     </div>
                   </div>
