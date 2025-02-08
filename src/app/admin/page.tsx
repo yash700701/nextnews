@@ -34,6 +34,17 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+
 
 
 function Page() {
@@ -45,7 +56,11 @@ function Page() {
     const [loading, setLoading] = useState(true);
     const [inputKey, setInputKey] = useState("");
     const [headline, setHeadline] = useState("")
+    const [videoHeadline, setVideoHeadline] = useState("")
     const [content, setContent] = useState("")
+    const [videoContent, setVideoContent] = useState("")
+    const [videoUrl, setVideoUrl] = useState("")
+    const [category, setCategory] = useState("")
     const notFilledMessage = "this field is empty"
 
      type dataType = {
@@ -66,6 +81,16 @@ function Page() {
         date: string,
     }[];
     const [news, setNews] = useState<newsType>([])
+
+    type videoType = {
+        _id: string,
+        videoUrl: string,
+        videoHeadline: string,
+        videoContent: string,
+        time: string,
+        date: string,
+    }[];
+    const [videos, setVideos] = useState<videoType>([])
 
     const router = useRouter();
 
@@ -88,7 +113,8 @@ function Page() {
     useEffect(()=>{
         async function getNews() {
             try {
-                const res = await axios.get("/api/report/getReport")
+                const category="all" 
+                const res = await axios.post("/api/report/getReport", {category})
                 setNews(res.data.report)
                 console.log("Component re-rendered 3")
                 
@@ -97,6 +123,21 @@ function Page() {
             }
         }
         getNews();
+    },[isAdmin])
+
+    useEffect(()=>{
+        async function getVideos() {
+            try {
+                const category="all" 
+                const res = await axios.post("/api/report/getVideos", {category})
+                setVideos(res.data.report)
+                console.log("Component re-rendered 3")
+                
+            } catch (error) {
+                console.log(error);
+            }
+        }
+        getVideos();
     },[isAdmin])
     
     function submit(){
@@ -117,7 +158,6 @@ function Page() {
            toast("invalid admin key");
        }
     }
-
 
     type newsTypeForId = {
         _id: string;
@@ -161,13 +201,42 @@ function Page() {
           console.log(date);
           
           
-          const response = await axios.post("/api/report/createReport", {name, email, time, date, headline, content, imageUrl});
-          toast("Report Submitted Successfully!");
+          const response = await axios.post("/api/report/createReport", {name, email, time, date, headline, content, category, imageUrl});
+          toast("News Uploaded Successfully!");
           console.log(response.data);
           setHeadline("")
           setContent("")
           setImage(null)
           setPreview(null)
+    
+        } catch (error) {
+          toast("Upload Failed");
+          console.error(error);
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      const handleUploadVideo = async () => {
+        setLoading(true);
+      
+        try {
+        
+          const name = data.userName
+          const email = data.email
+          const date = new Date(Date.now()).toISOString().split("T")[0]
+          const time = new Date(Date.now()).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    
+          console.log(time);
+          console.log(date);
+          
+          
+          const response = await axios.post("/api/report/uploadVideo", {name, email, time, date, videoHeadline, category, videoContent, videoUrl});
+          toast("Video Uploaded Successfully!");
+          console.log(response.data);
+          setVideoHeadline("")
+          setVideoContent("")
+          setVideoUrl("")
     
         } catch (error) {
           toast("Upload Failed");
@@ -230,6 +299,23 @@ function Page() {
                       value={content}
                       onChange={(e) => setContent(e.target.value)}
                     ></Textarea>
+                     <Select onValueChange={(value) => setCategory(value)}>
+                      <SelectTrigger className="bg-white mb-2">
+                        <SelectValue placeholder="Select Category" />
+                      </SelectTrigger>
+                      <SelectContent className='bg-white text-zinc-950'>
+                        <SelectGroup>
+                          <SelectLabel>Categories</SelectLabel>
+                          <SelectItem value="politics">Politics </SelectItem>
+                          <SelectItem value="business">Business</SelectItem>
+                          <SelectItem value="technology">Technology </SelectItem>
+                          <SelectItem value="sports">Sports </SelectItem>
+                          <SelectItem value="entertainment">Entertainment </SelectItem>
+                          <SelectItem value="education">Education  </SelectItem>
+                          <SelectItem value="weather">Weather  </SelectItem>
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
                     <input
                       type="file"
                       name="file"
@@ -238,12 +324,12 @@ function Page() {
                       className="block w-full p-2 text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-white focus:outline-none"
                       // onChange={(e) => setFile(e.target.files[0])}
                     />
-                   <div className="w-40 h-40 rounded-lg bg-slate-50 mt-5">
+                   <div className="w-20 h-20 rounded-lg bg-slate-50 mt-2">
                    {preview && 
                     <Image 
                     src={preview} 
                     alt="Preview" 
-                    className="w-40 mt-5 h-40 object-cover rounded-lg mb-3" 
+                    className="w-20 mt-2 h-20 object-cover rounded-lg mb-3" 
                     width={80}
                     height={80}
                     unoptimized
@@ -262,14 +348,84 @@ function Page() {
                 </div>
               </DrawerContent>
             </Drawer>
+
+            {/* video upload */}
+        <Drawer>
+              <DrawerTrigger asChild>
+                <Button className="ml-5 mt-2 text-blue-500 w-60 bg-zinc-50 hover:bg-zinc-50 hover:shadow-md border-[1px]" variant="outline">Upload Video</Button>
+              </DrawerTrigger>
+              <DrawerContent className='bg-zinc-100 text-zinc-950'>
+                <div className="mx-auto w-full  max-w-sm">
+                  <DrawerHeader>
+                    <DrawerTitle>Create New News</DrawerTitle>
+                  </DrawerHeader>
+                  <div className="">
+                  <div className=" backdrop-blur-sm p-4 max-w-md">
+                    <Input
+                    placeholder="Headline"
+                    className="bg-white mb-2"
+                    value={videoHeadline}
+                    onChange={(e) => setVideoHeadline(e.target.value)}
+                    />
+                    <Textarea
+                      className="bg-white mb-2"
+                      placeholder="content"
+                      value={videoContent}
+                      onChange={(e) => setVideoContent(e.target.value)}
+                    ></Textarea>
+                     <Input
+                    placeholder="Video Url"
+                    className="bg-white mb-2"
+                    value={videoUrl}
+                    onChange={(e) => setVideoUrl(e.target.value)}
+                    />
+                    <Select onValueChange={(value) => setCategory(value)}>
+                      <SelectTrigger className="bg-white mb-2">
+                        <SelectValue placeholder="Select Category" />
+                      </SelectTrigger>
+                      <SelectContent className='bg-white text-zinc-950'>
+                        <SelectGroup>
+                          <SelectLabel>Categories</SelectLabel>
+                          <SelectItem value="politics">Politics </SelectItem>
+                          <SelectItem value="business">Business</SelectItem>
+                          <SelectItem value="technology">Technology </SelectItem>
+                          <SelectItem value="sports">Sports </SelectItem>
+                          <SelectItem value="entertainment">Entertainment </SelectItem>
+                          <SelectItem value="education">Education  </SelectItem>
+                          <SelectItem value="weather">Weather  </SelectItem>
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                </div>
+                  </div>
+                  <DrawerFooter>
+                  <Button onClick={handleUploadVideo} disabled={loading} className="mt-3 bg-white w-full ">
+                  {loading ? "Uploading..." : "Upload"}
+                  </Button>
+                    <DrawerClose asChild>
+                      <Button className='text-white' variant="outline">Cancel</Button>
+                    </DrawerClose>
+                  </DrawerFooter>
+                </div>
+              </DrawerContent>
+            </Drawer>
         
         <div className='w-full mt-10 bg-zinc-100'>
-        <h1 className='text-2xl font-semibold text-center pt-5 '>All listed news</h1>
-        <div className="w-full mt-10 py-10 bg-zinc-100 grid sm:grid-cols-2 lg:grid-cols-3 gap-3 items-center justify-center  ">
+
+        <Tabs defaultValue="account" className="w-full mt-5">
+          <TabsList className='w-full gap-5'>
+            <TabsTrigger value="account" className='w-40'>All News</TabsTrigger>
+            <TabsTrigger value="password" className='w-40'>Videos</TabsTrigger>
+          </TabsList>
+          <TabsContent value="account">
+          {/* news */}
+
+
+          <div className="w-full mt-10 py-10 bg-zinc-100 grid sm:grid-cols-2 lg:grid-cols-3 gap-3 justify-center  ">
             {
               news.map((rep, index)=>(
-                <div key={index} className="mx-auto p-4">
-                  <div className=" bg-white shadow-lg rounded-md  p-4 ">
+                <div key={index} className="mx-auto p-4 w-96">
+                  <div className=" bg-white shadow-lg  rounded-md  p-4 ">
                     {rep.fileUrl && (
                     <div>
                     <Image
@@ -329,6 +485,62 @@ function Page() {
               ))
             }
             </div>
+
+          </TabsContent>
+          <TabsContent value="password">
+           {/* videos */}
+
+           <div>
+          {
+            videos.map((rep, index)=>(
+              <div key={index} className="mx-auto w-96 p-4">
+                <div className="bg-white shadow-lg rounded-md  p-4 ">
+                  <iframe
+                      className="w-full aspect-video"
+                      src={rep.videoUrl}
+                      allowFullScreen
+                    />
+                  <div className="mt-3">
+                    <p className="text-gray-500 text-sm"> {rep.date} |  {rep.time}</p>
+                    {/* <p className="text-gray-600 mt-1 w-80 bg-orange-600">file link - {rep.fileUrl}</p> */}
+                    <p className="text-black text-xl font-semibold mt-1">{rep.videoHeadline ? rep.videoHeadline : ( <div className="text-red-500">{notFilledMessage}</div> )}</p>
+                    <p className="text-zinc-900 mt-1">{rep.videoContent ? rep.videoContent.split(" ").slice(0, 30).join(" ") + "..." : ( <div className="text-red-500">{notFilledMessage}</div> )}</p>
+                    <AlertDialog >
+                      <AlertDialogTrigger asChild>
+                        <Button variant="outline" className="mt-2 text-zinc-100">read full news</Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent className="h-screen  py-12 w-full border-none bg-white overflow-y-auto text-zinc-950">
+                        <AlertDialogHeader className="text-left">
+                        <iframe
+                          className="w-full aspect-video"
+                          src={rep.videoUrl}
+                          allowFullScreen
+                        />
+                          <p className="text-gray-500 text-sm">{rep.date} | {rep.time}</p>
+                          <p className="text-black text-xl font-semibold mt-1">
+                            {rep.videoHeadline ? rep.videoHeadline : <div className="text-red-500">{notFilledMessage}</div>}
+                          </p>
+                          <p className="text-zinc-900 mt-1">
+                            {rep.videoContent ? rep.videoContent : <div className="text-red-500">{notFilledMessage}</div>}
+                          </p>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel className="text-zinc-100">Back</AlertDialogCancel>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+
+                  </div>
+                </div>
+              </div>
+            ))
+          }
+            </div>
+
+          </TabsContent>
+        </Tabs>
+
+       
         </div>
         
     </div>

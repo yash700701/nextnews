@@ -1,5 +1,5 @@
 import { connect } from "@/dbConfig/dbConfig";
-import Reports from "@/models/newsModel";
+import Videos from "@/models/videoModel";
 import { NextRequest, NextResponse } from "next/server";
 
 connect();
@@ -7,18 +7,18 @@ connect();
 export async function POST(request: NextRequest){
     try { 
         const reqBody = await request.json()
-        const { name, email, time, date, headline, category, content, imageUrl } = reqBody
+        const { name, email, time, date, category, videoHeadline, videoContent, videoUrl } = reqBody
         
         // create new report
-        const newReport = new Reports({
+        const newReport = new Videos({
             userName: name,
             email,
-            headline,
-            content,
-            category,
+            videoHeadline,
+            videoContent,
             time, 
+            category,
             date,
-            fileUrl: imageUrl,
+            videoUrl,
         })
          
         const savedReport = await newReport.save()

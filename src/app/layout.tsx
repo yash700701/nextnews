@@ -48,7 +48,7 @@ export default function RootLayout({
         setUrl(res.data.data.imgUrl);
     }
     getUserDetail();
-},[])
+  },[])
 
   return (
     <html lang="en">

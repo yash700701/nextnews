@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const reportSchema = new mongoose.Schema({
+const videoSchema = new mongoose.Schema({
     userName: {
         type: String,
         required: true,
@@ -10,10 +10,10 @@ const reportSchema = new mongoose.Schema({
         required: true,
         unique:false,
     },
-    headline: {
+    videoHeadline: {
         type: String,
     },
-    content: {
+    videoContent: {
         type: String,
     },
     category: {
@@ -25,10 +25,10 @@ const reportSchema = new mongoose.Schema({
     time: {
         type: String,
     },
-    fileUrl: {
+    videoUrl: {
         type: String,
     }
 })
 
-const Reports = mongoose.models.reports || mongoose.model("reports", reportSchema);
-export default Reports
+const Videos = mongoose.models.videos || mongoose.model("videos", videoSchema);
+export default Videos
