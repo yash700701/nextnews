@@ -132,7 +132,7 @@ export default function Page() {
          </div>
        )}
        {visible && (
-        <div className='mt-32 flex flex-col items-center'>
+        <div className='pt-32 flex bg-zinc-100 h-screen w-full text-zinc-950 flex-col items-center'>
         <h1>Login Successfully</h1>
         <h1>go to <span>
             <Link className='text-blue-600 font-semibold' href="/">

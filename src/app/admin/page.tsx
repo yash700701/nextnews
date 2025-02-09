@@ -256,6 +256,16 @@ function Page() {
               }
         }
 
+       async function handleDeleteVideo(videos: newsTypeForId){
+              try {
+                const id = videos?._id;
+                await axios.post("/api/report/deleteVideo", {id})
+                toast("video deleted successfully")
+              } catch (error) {
+                console.log(error);
+              }
+        }
+
   return (
    <>
     {loading && (
@@ -504,31 +514,25 @@ function Page() {
                     <p className="text-gray-500 text-sm"> {rep.date} |  {rep.time}</p>
                     {/* <p className="text-gray-600 mt-1 w-80 bg-orange-600">file link - {rep.fileUrl}</p> */}
                     <p className="text-black text-xl font-semibold mt-1">{rep.videoHeadline ? rep.videoHeadline : ( <div className="text-red-500">{notFilledMessage}</div> )}</p>
-                    <p className="text-zinc-900 mt-1">{rep.videoContent ? rep.videoContent.split(" ").slice(0, 30).join(" ") + "..." : ( <div className="text-red-500">{notFilledMessage}</div> )}</p>
+                    <p className="text-zinc-900 mt-1">{rep.videoContent ? rep.videoContent : ( <div className="text-red-500">{notFilledMessage}</div> )}</p>
                     <AlertDialog >
-                      <AlertDialogTrigger asChild>
-                        <Button variant="outline" className="mt-2 text-zinc-100">read full news</Button>
-                      </AlertDialogTrigger>
-                      <AlertDialogContent className="h-screen  py-12 w-full border-none bg-white overflow-y-auto text-zinc-950">
-                        <AlertDialogHeader className="text-left">
-                        <iframe
-                          className="w-full aspect-video"
-                          src={rep.videoUrl}
-                          allowFullScreen
-                        />
-                          <p className="text-gray-500 text-sm">{rep.date} | {rep.time}</p>
-                          <p className="text-black text-xl font-semibold mt-1">
-                            {rep.videoHeadline ? rep.videoHeadline : <div className="text-red-500">{notFilledMessage}</div>}
-                          </p>
-                          <p className="text-zinc-900 mt-1">
-                            {rep.videoContent ? rep.videoContent : <div className="text-red-500">{notFilledMessage}</div>}
-                          </p>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                          <AlertDialogCancel className="text-zinc-100">Back</AlertDialogCancel>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <Button className="mt-2 w-full bg-red-200 hover:bg-red-300 text-red-800 py-2 rounded-lg transition-all duration-300" variant="outline">Delete News</Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  This action cannot be undone. This will permanently delete this news
+                                  from our servers.
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                <AlertDialogAction onClick={()=>handleDeleteVideo(rep)} className='bg-red-100 text-red-800'>Continue</AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                            </AlertDialog>
 
                   </div>
                 </div>
