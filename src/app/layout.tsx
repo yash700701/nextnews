@@ -67,12 +67,14 @@ export default function RootLayout({
       setData(res.data.data);
     };
   
-    const timeout = setTimeout(() => {
-      getUserDetail();
+    const timeout = setInterval(() => {
+      
+        getUserDetail();
+      
     }, 2000); // Runs after 2 seconds
   
     return () => clearTimeout(timeout); // Cleanup on unmount
-  }, []);
+  }, [data]);
 
 
   const logout = async()=>{
